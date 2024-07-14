@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Show Event</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #e8f5e9; /* Light green background */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            display: none; /* Initially hide registration form */
+        }
+        h1, h2, h3 {
+            color: #4a148c; /* Purple headers */
+        }
+        input[type="text"], input[type="email"], input[type="number"], select {
+            width: calc(100% - 20px);
+            padding: 8px;
+            margin: 8px 0;
+            border: 2px solid #4caf50; /* Green border */
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="submit"], button {
+            background-color: #f50057; /* Pink buttons */
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        input[type="submit"]:hover, button:hover {
+            background-color: #c51162; /* Darker pink on hover */
+        }
+        .success-message, .form-data, .preview-message {
+            margin-top: 10px;
+            background-color: #c8e6c9; /* Light green success message */
+            border: 1px solid #4caf50;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .nav-menu {
+            margin-bottom: 20px;
+        }
+        hr {
+            border: 1px solid #4caf50; /* Green horizontal line */
+        }
+        a {
+            color: #1e88e5; /* Blue links */
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline; /* Underline on hover */
+        }
+    </style>
+    <script>
+        function validateForm() {
+            var name = document.forms["registrationForm"]["name"].value;
+            var email = document.forms["registrationForm"]["email"].value;
+            var phone = document.forms["registrationForm"]["phone"].value;
+
+            if (name === "") {
+                alert("Name must be filled out");
+                return false;
+            }
+            if (email === "") {
+                alert("Email must be filled out");
+                return false;
+            }
+            if (phone === "") {
+                alert("Phone must be filled out");
+                return false;
+            }
+            return true;
+        }
+
+        function showRegistrationForm() {
+            var registrationForm = document.getElementById("registrationForm");
+            var container = document.getElementById("container");
+            container.style.display = "none"; // Hide event details
+            registrationForm.style.display = "block"; // Show registration form
+        }
+
+        function showSuccessMessage() {
+            var form = document.getElementById("registrationForm");
+            form.style.display = "none";
+            var successMessage = document.getElementById("successMessage");
+            successMessage.style.display = "block";
+            successMessage.style.opacity = 0;
+            fadeIn(successMessage);
+            setTimeout(clearSuccessMessage, 5000); // Clear success message after 5 seconds
+
+            sendEmail(); // Call the sendEmail function after registration
+        }
+
+        function fadeIn(element) {
+            let op = 0;  // initial opacity
+            element.style.display = 'block';
+            const timer = setInterval(() => {
+                if (op >= 1) {
+                    clearInterval(timer);
+                }
+                element.style.opacity = op;
+                op += 0.1;
+            }, 50);
+        }
+
+        function clearSuccessMessage() {
+            var successMessage = document.getElementById("successMessage");
+            successMessage.style.display = "none";
+            switchToEventDetails();
+        }
+
+        function switchToEventDetails() {
+            var registrationForm = document.getElementById("registrationForm");
+            var container = document.getElementById("container");
+            registrationForm.style.display = "none"; // Hide registration form
+            container.style.display = "block"; // Show event details
+        }
+
+        function toggleElementVisibility(elementId) {
+            var element = document.getElementById(elementId);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+
+        function updateContent(elementId, content) {
+            var element = document.getElementById(elementId);
+            element.innerHTML = content;
+        }
+
+        function getFormData() {
+            var form = document.forms["registrationForm"];
+            var formData = {
+                name: form["name"].value,
+                email: form["email"].value,
+                phone: form["phone"].value,
+                gender: form["gender"].value,
+                age: form["age"].value
+            };
+            return formData;
+        }
+
+        function displayFormData() {
+            var formData = getFormData();
+            var formattedData = "<strong>Form Data:</strong><br>";
+            for (var key in formData) {
+                formattedData += key.charAt(0).toUpperCase() + key.slice(1) + ": " + formData[key] + "<br>";
+            }
+            updateContent("formData", formattedData);
+            toggleElementVisibility("formData");
+        }
+
+        function resetForm() {
+            var form = document.forms["registrationForm"];
+            form.reset();
+        }
+
+        function previewFormData() {
+            var formData = getFormData();
+            var previewContent = "<strong>Preview Your Data:</strong><br>";
+            for (var key in formData) {
+                previewContent += key.charAt(0).toUpperCase() + key.slice(1) + ": " + formData[key] + "<br>";
+            }
+            updateContent("previewMessage", previewContent);
+            toggleElementVisibility("previewMessage");
+        }
+
+        function validateAge() {
+            var age = document.getElementById("age").value;
+            var ageError = document.getElementById("ageError");
+            if (age < 18 || age > 100) {
+                ageError.innerHTML = "Age must be between 18 and 100.";
+                ageError.style.color = "red";
+            } else {
+                ageError.innerHTML = "";
+            }
+        }
+
+        function toggleFormVisibility() {
+            var registrationForm = document.getElementById("registrationForm");
+            var container = document.getElementById("container");
+            if (registrationForm.style.display === "none") {
+                container.style.display = "none";
+                registrationForm.style.display = "block";
+            } else {
+                registrationForm.style.display = "none";
+                container.style.display = "block";
+            }
+        }
+
+        function sendEmail() {
+            var formData = getFormData();
+            console.log("Sending email with the following data:");
+            console.log("Name:", formData.name);
+            console.log("Email:", formData.email);
+            console.log("Phone:", formData.phone);
+            console.log("Gender:", formData.gender);
+            console.log("Age:", formData.age);
+
+            // Simulate email sending
+            alert("An email has been sent to " + formData.email + " with your registration details!");
+        }
+    </script>
+</head>
+<body>
+    <div class="nav-menu">
+        <button onclick="toggleFormVisibility()">Show/Hide Registration Form</button>
+    </div>
+
+    <div id="container">
+        <center>
+            <h1>Fashion Show</h1>
+            <p><i>Strut in Style, Where Fashion takes the Spotlight</i></p>
+            <hr>
+        </center>
+        <p>Fashion Week is a common event in the fashion industry where top designers, brands, or fashion houses showcase their upcoming collections through runway shows and presentations. Major fashion capitals like New York, Paris, Milan, and London host some of the most influential fashion weeks, setting trends for the seasons to come.</p>
+        
+        <center>
+            <img src="fas.jpg" alt="Fashion Show" width="700px">
+            <h2>Fashion Week Show</h2>
+        </center>
+        <p>The Chennai Trade Centre recently hosted a successful fashion show featuring a variety of bridal wears including gowns, sarees, and lehengas. The event highlighted different bridal styles, perfect for any bride-to-be, showcasing colors and fabrics that flatter every individual. Models graced the runway with grace and beauty, showcasing the latest trends in bridal wear.</p>
+        
+        <p>From traditional to contemporary designs, the show featured standout attire such as intricately designed lace gowns and embroidered sarees. Models captivated the audience with their stunning appearances, inspiring attendees to explore their perfect bridal attire.</p>
+        
+        <center>
+            <img src="fas2.jpg" alt="Bridal Gown" width="300px">
+        </center>
+        
+        <p>One of the highlights of the show was a floral motif gown adorned with zardozi stones and beads, offering a unique and statement-making design. The gown, featuring a pink sleeveless design with a V neckline, was crafted to exude elegance and charm, making it an ideal choice for a summer wedding.</p>
+        
+        <center>
+            <a href="https://www.pothys.com/"><h1>Pothys Fashion Store</h1></a>
+            <p><i><b>Save the Date</b></i></p>
+            <h3>14.07.2024</h3>
+            <p>Saturday, July 2024 | Doors open at 8pm</p>
+            <p>Free Entry | Free Drinks | No Pets Allowed</p>
+            
+            <div class="button-container">
+                <button onclick="showRegistrationForm()">Click below for Participation</button>
+            </div>
+            <hr>
+            
+            <h2>Contact</h2>
+            <p>9876543210 | mehabusafrin@gmail.com</p>
+            <p>Apple Tree Hotel, Vanarpettai, Tirunelveli</p>
+        </center>
+    </div>
+
+    <div class="container" id="registrationForm">
+        <h2>Event Registration</h2>
+        <form name="registrationForm" onsubmit="event.preventDefault(); if(validateForm()) showSuccessMessage();" method="post">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="phone">Phone:</label><br>
+            <input type="text" id="phone" name="phone" required><br>
+
+            <label for="gender">Gender:</label><br>
+            <select id="gender" name="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+            </select><br>
+
+            <label for="age">Age:</label><br>
+            <input type="number" id="age" name="age" min="18" max="100" oninput="validateAge()"><br>
+            <span id="ageError" class="error-message"></span>
+
+            <input type="submit" value="Register">
+        </form>
+
+        <div id="successMessage" class="success-message">
+            <p>Thank you for registering! Your registration has been successful.</p>
+        </div>
+        
+        <div id="formData" class="form-data"></div>
+        <div id="previewMessage" class="preview-message"></div>
+        <button onclick="resetForm()">Reset Form</button>
+        <button onclick="previewFormData()">Preview Form Data</button>
+    </div>
+</body>
+</html>
